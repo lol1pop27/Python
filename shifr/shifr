@@ -1,0 +1,14 @@
+def case(text):
+    for word in text.split():
+        shift = sum(1 for c in word if c.isalpha())
+        for char in word:
+            if char.isalpha():
+                base = ord('a') if char.islower() else ord('A')
+                new_char = chr((ord(char) - base + shift) % 26 + base)
+                print(new_char, end='')
+            else:
+                print(char, end='')
+        print(' ', end='')
+
+text1 = input("введите текст:")
+case(text1)

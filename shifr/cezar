@@ -1,0 +1,93 @@
+# Константы для алфавитов
+UPPER_ENG_ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+LOWER_ENG_ALPHABET = 'abcdefghijklmnopqrstuvwxyz'
+UPPER_RUS_ALPHABET = 'АБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ'
+LOWER_RUS_ALPHABET = 'абвгдежзийклмнопрстуфхцчшщъыьэюя'
+
+def get_valid_input(prompt, valid_values, error_message):
+    """Функция для получения корректного ввода от пользователя"""
+    while True:
+        value = input(prompt).lower()
+        if value in valid_values:
+            return value
+        print(error_message)
+
+def get_shift_step():
+    """Получение корректного шага сдвига"""
+    while True:
+        n = input('Введите шаг сдвига: ')
+        if n.isdigit():
+            return int(n)
+        print('Шаг сдвига должен быть целым числом! Попробуйте снова.')
+
+def caesar_cipher(direction, language, shift, text):
+    """Реализация шифра Цезаря"""
+    # Выбор алфавита в зависимости от языка
+    if language == 'ru':
+        alphabet_size = 32
+        lower_alphabet = LOWER_RUS_ALPHABET
+        upper_alphabet = UPPER_RUS_ALPHABET
+    else:  # eng
+        alphabet_size = 26
+        lower_alphabet = LOWER_ENG_ALPHABET
+        upper_alphabet = UPPER_ENG_ALPHABET
+    
+    # Определение направления сдвига
+    shift = shift if direction == 'шифрование' else -shift
+    shift = shift % alphabet_size  # Нормализация сдвига
+    
+    result = []
+    
+    for char in text:
+        if char.isalpha():
+            # Определяем регистр и выбираем соответствующий алфавит
+            if char.islower():
+                alphabet = lower_alphabet
+            else:
+                alphabet = upper_alphabet
+            
+            # Находим индекс символа в алфавите
+            position = alphabet.index(char)
+            # Вычисляем новую позицию с учетом сдвига
+            new_position = (position + shift) % alphabet_size
+            # Добавляем зашифрованный символ
+            result.append(alphabet[new_position])
+        else:
+            # Не-буквенные символы оставляем без изменений
+            result.append(char)
+    
+    return ''.join(result)
+
+def main():
+    """Основная функция программы"""
+    print("=== Шифр Цезаря ===")
+    
+    # Получение данных от пользователя
+    direction = get_valid_input(
+        'Введите операцию ("шифрование" или "дешифрование"): ',
+        ['шифрование', 'дешифрование'],
+        'Некорректная операция! Введите "шифрование" или "дешифрование".'
+    )
+    
+    language = get_valid_input(
+        'Введите язык ("ru" для русского или "eng" для английского): ',
+        ['ru', 'eng'],
+        'Некорректный язык! Введите "ru" или "eng".'
+    )
+    
+    shift = get_shift_step()
+    
+    text = input('Введите текст: ')
+    
+    # Выполнение шифрования/дешифрования
+    result = caesar_cipher(direction, language, shift, text)
+    
+    # Вывод результата
+    print("\n" + "=" * 50)
+    print(f"Исходный текст: {text}")
+    print(f"Результат ({direction}): {result}")
+    print("=" * 50)
+
+# Запуск программы
+if __name__ == "__main__":
+    main()
